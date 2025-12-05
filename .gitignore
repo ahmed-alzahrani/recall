@@ -25,3 +25,21 @@ replay_pid*
 
 # Kotlin Gradle plugin data, see https://kotlinlang.org/docs/whatsnew20.html#new-directory-for-kotlin-data-in-gradle-projects
 .kotlin/
+
+
+# Backend
+backend/build/
+backend/.gradle/
+backend/out/
+backend/*.log
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env.local
+
+# Environment files
+.env
+*.env
+
+.vscode/*
