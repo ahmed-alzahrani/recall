@@ -1,6 +1,7 @@
 import { useDropzone } from 'react-dropzone'
 import { useState } from 'react';
 import './FileUpload.css';
+import { uploadDocument } from '../../services/api';
 
 type UploadStatus = 'idle' | 'uploading' | 'success' | 'error';
 
@@ -17,7 +18,7 @@ function FileUpload() {
         },
         maxFiles: 1,
         maxSize: 25 * 1024 * 1024, // 25MB
-        onDrop: (acceptedFiles, rejectedFiles) => {
+        onDrop: async (acceptedFiles, rejectedFiles) => {
             setError(null)
 
             if (rejectedFiles.length > 0) {
@@ -39,7 +40,15 @@ function FileUpload() {
 
             if (acceptedFiles.length > 0) {
                 setFile(acceptedFiles[0])
-                setStatus('idle')
+                setStatus('uploading')
+
+                try {
+                    const result = await uploadDocument(acceptedFiles[0])
+                    setStatus('success')
+                } catch (error) {
+                    setError('Upload failed. Please try again.')
+                    setStatus('error')
+                }
             }
         }
     })
