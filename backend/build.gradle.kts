@@ -29,6 +29,7 @@ dependencies {
 	implementation("com.google.cloud:google-cloud-vertexai:0.4.0")
 	implementation("org.apache.pdfbox:pdfbox:3.0.1")
 	implementation("com.pgvector:pgvector:0.1.4")
+	implementation("org.springframework.boot:spring-boot-starter-amqp")
 
 	runtimeOnly("org.postgresql:postgresql")
 

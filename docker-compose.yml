@@ -17,7 +17,21 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-
+  
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: recall-rabbitmq
+    ports:
+      - "15672:15672" # RabbitMQ Management UI
+      - "5672:5672" # RabbitMQ AMQP port
+    environment: 
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 volumes:
   postgres_data:
 
