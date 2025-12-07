@@ -30,6 +30,9 @@ dependencies {
 	implementation("org.apache.pdfbox:pdfbox:3.0.1")
 	implementation("com.pgvector:pgvector:0.1.4")
 	implementation("org.springframework.boot:spring-boot-starter-amqp")
+	implementation("org.flywaydb:flyway-core")
+	implementation("org.flywaydb:flyway-database-postgresql")
+	implementation("org.springframework.boot:spring-boot-starter-jdbc")
 
 	runtimeOnly("org.postgresql:postgresql")
 
