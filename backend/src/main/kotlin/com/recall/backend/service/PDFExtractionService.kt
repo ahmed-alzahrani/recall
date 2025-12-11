@@ -7,14 +7,12 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import kotlin.io.path.Path
 
+import com.recall.backend.dto.PageText
+
 @Service
 class PDFExtractionService(
     @Value("\${app.upload.tmp-dir}") private val tmpFileStoragePath: String,
 ) {
-    data class PageText(
-        val pageNumber: Int,
-        val text: String,
-    )
 
     private val tmpFileStorage = Path(tmpFileStoragePath)
 

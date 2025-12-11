@@ -1,15 +1,18 @@
 import org.springframework.amqp.rabbit.annotation.RabbitListener
 import org.springframework.stereotype.Component
-import com.recall.backend.repository.DocumentRepository
+import com.recall.backend.service.PDFExtractionService
+import com.recall.backend.service.ChunkingService
 import com.recall.backend.model.DocumentStatus
 
 @Component
 class DocumentProcessingListener(
-    private val documentRepository: DocumentRepository,
+    private val pdfExtractionService: PDFExtractionService,
+    private val chunkingService: ChunkingService,
 ) {
 
     @RabbitListener(queues = ["document.processing"])
     fun processDocument(documentId: Long) {
-        val document = documentRepository.findById(documentId)
+        val pages = pdfExtractionService.extractText(documentId)
+        val chunks = chunkingService.chunkDocument(pages)
     }
 }

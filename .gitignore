@@ -45,3 +45,4 @@ frontend/.env.local
 .vscode/*
 
 .uploads/tmp/*
+.secrets/*

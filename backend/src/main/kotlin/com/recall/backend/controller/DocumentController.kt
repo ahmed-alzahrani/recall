@@ -48,12 +48,6 @@ class DocumentController(
                 checkNotNull(savedDocument.id) { "Document ID should be populated after save" }
         )
 
-        // we need to return the document id to the frontend so it can poll for the status
-        // after this, we need to send a message to RabbitMQ to start the processing
-
-        // Beyond this, we need the infrastructure to listen to the message and process the PDF into
-        // chunks
-
         return mapOf(
             "message" to "File uploaded successfully",
             "filename" to file.originalFilename,
