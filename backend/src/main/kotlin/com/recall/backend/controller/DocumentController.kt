@@ -55,4 +55,19 @@ class DocumentController(
             "documentId" to savedDocument.id
             )
     }
+
+    @GetMapping("/{documentId}/status")
+    fun getDocumentStatus(@PathVariable documentId: Long): Map<String, Any?> {
+        val document = documentRepository.findById(documentId)
+            .orElseThrow { RuntimeException("Document not found with id: $documentId") }
+        
+        return mapOf(
+            "documentId" to document.id,
+            "status" to document.status.name,
+            "filename" to document.filename,
+            "totalChunks" to document.totalChunks,
+            "createdAt" to document.createdAt,
+            "updatedAt" to document.updatedAt
+        )
+    }
 }

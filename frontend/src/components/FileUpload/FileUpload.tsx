@@ -1,9 +1,9 @@
 import { useDropzone } from 'react-dropzone'
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './FileUpload.css';
-import { uploadDocument } from '../../services/api';
+import { uploadDocument, getDocumentStatus } from '../../services/api';
 
-type UploadStatus = 'idle' | 'uploading' | 'success' | 'error';
+type UploadStatus = 'idle' | 'uploading' | 'processing' | 'success' | 'error';
 
 
 function FileUpload() {
@@ -11,6 +11,9 @@ function FileUpload() {
     const [file, setFile] = useState<File | null>(null);
     const [status, setStatus] = useState<UploadStatus>('idle');
     const [error, setError] = useState<string | null>(null);
+
+    const [documentId, setDocumentId] = useState<number | null>(null);
+    const pollingIntervalRef = useRef<number| null>(null);
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         accept: {
@@ -44,7 +47,9 @@ function FileUpload() {
 
                 try {
                     const result = await uploadDocument(acceptedFiles[0])
-                    setStatus('success')
+                    const id = result.documentId
+                    setDocumentId(id)
+                    setStatus('processing')
                 } catch (error) {
                     setError('Upload failed. Please try again.')
                     setStatus('error')
@@ -52,6 +57,39 @@ function FileUpload() {
             }
         }
     })
+
+    useEffect(() => {
+        if (status === 'processing' && documentId !== null) {
+            const pollStatus = async () => {
+                try {
+                    const statusData = await getDocumentStatus(documentId)
+                    // statusData.status will be 'PENDING', 'PROCESSING', 'COMPLETED', or 'FAILED'
+                    
+                    if (statusData.status === 'COMPLETED' || statusData.status === 'FAILED') {
+                        if (pollingIntervalRef.current) {
+                            clearInterval(pollingIntervalRef.current)
+                            pollingIntervalRef.current = null
+                        }
+                        setStatus(statusData.status === 'COMPLETED' ? 'success' : 'error')
+                        if (statusData.status === 'FAILED') {
+                            setError('Document processing failed')
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error polling status:', error)
+                }
+            }
+            
+            pollStatus()
+            pollingIntervalRef.current = setInterval(pollStatus, 2000) as unknown as number
+            
+            return () => {
+                if (pollingIntervalRef.current) {
+                    clearInterval(pollingIntervalRef.current)
+                }
+            }
+        }
+    }, [status, documentId])
 
     return (
         <div className="upload-container">
@@ -76,6 +114,18 @@ function FileUpload() {
             {error && (
                 <div className="error-message">
                     {error}
+                </div>
+            )}
+            
+            {status === 'processing' && (
+                <div className="processing-status">
+                    <p>Processing document...</p>
+                </div>
+            )}
+            
+            {status === 'success' && (
+                <div className="success-message">
+                    <p>✅ Document processed successfully!</p>
                 </div>
             )}
         </div>
