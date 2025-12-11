@@ -43,3 +43,6 @@ frontend/.env.local
 *.env
 
 .vscode/*
+
+.uploads/tmp/*
+.secrets/*
