@@ -5,14 +5,13 @@ import org.springframework.stereotype.Service
 import com.recall.backend.dto.ChunkWithEmbedding
 import com.recall.backend.dto.ChunkData
 
-import com.google.cloud.vertexai.VertexAI
-import com.google.cloud.vertexai.api.PredictRequest
 import com.google.cloud.vertexai.api.PredictionServiceClient
 import com.google.cloud.vertexai.api.PredictionServiceSettings
 import com.google.cloud.vertexai.api.PredictResponse
 import com.google.protobuf.Value as ProtobufValue
 
 import com.google.protobuf.Struct
+import javax.annotation.PreDestroy
 
 
 @Service
@@ -22,7 +21,11 @@ class EmbeddingService(
     @Value("\${google.cloud.vertexai.embedding-model}") private val modelName: String,
 ) {
 
-    private val vertexAi = VertexAI(projectId, location)
+    companion object {
+        private const val BATCH_SIZE = 1000;
+        private const val EMBEDDING_DIMENSION = 768;
+    }
+
 
     private val predictionServiceClient = PredictionServiceClient.create(
         PredictionServiceSettings.newBuilder()
@@ -30,48 +33,53 @@ class EmbeddingService(
         .build()
     )
 
+    @PreDestroy
+    fun cleanup() {
+        predictionServiceClient.close()
+    }
+
     fun embedChunks(chunks: List<ChunkData>): List<ChunkWithEmbedding> {
-        val batchSize = 1000
+        val modelPath = "projects/${projectId}/locations/${location}/publishers/google/models/${modelName}"
         
-        return chunks.chunked(batchSize).flatMap { batch ->
-            val texts = batch.map { it.text }
-            val instances = textToProtobufValue(texts)
-            val request = predictionRequest(instances)
+        return chunks.chunked(BATCH_SIZE).flatMap { batch ->
+            try {
+                val texts = batch.map { it.text }
+                val instances = textToProtobufValue(texts)
+                val parameters = ProtobufValue.newBuilder()
+                    .setStructValue(
+                        Struct.newBuilder()
+                            .putFields("taskType", ProtobufValue.newBuilder().setStringValue("RETRIEVAL_DOCUMENT").build())
+                            .build()
+                    )
+                    .build()
+    
+                val response = predictionServiceClient.predict(modelPath, instances, parameters)
+                val embeddings = extractEmbeddings(response)
 
-            val response = predictionServiceClient.predict(request)
-            val embeddings = extractEmbeddings(response)
-
-            batch.zip(embeddings).map { (chunk, embedding) ->
-                ChunkWithEmbedding(
-                    chunkdata = chunk,
-                    embedding = embedding.toList()
-                )
+                validateEmbeddings(batch, embeddings)
+    
+                batch.zip(embeddings).map { (chunk, embedding) ->
+                    ChunkWithEmbedding(
+                        chunkData = chunk,
+                        embedding = embedding.toList()
+                    )
+                }
+            } catch (e: Exception) {
+                throw RuntimeException("Failed to embed batch of ${batch.size} chunks: ${e.message}", e)
             }
         }
     }
 
-    private fun textToProtobufValue(texts: List<String>): List<ProtobufValue!> {
+    private fun textToProtobufValue(texts: List<String>): List<ProtobufValue> {
         return texts.map { text ->
-            ProtobufValue.newBuilder()
-                .setStringValue(text)
-                .build()
-        }
-    }
-
-    private fun predictionRequest(instances: List<ProtobufValue!>): PredictRequest {
-        return PredictRequest.newBuilder()
-        .setEndpoint("projects/${projectId}/locations/${location}/publishers/google/models/${modelName}")
-        .addAllInstances(instances)
-        .setParameters(
             ProtobufValue.newBuilder()
                 .setStructValue(
                     Struct.newBuilder()
-                        .putFields("taskType", ProtobufValue.newBuilder().setStringValue("RETRIEVAL_DOCUMENT").build())
+                        .putFields("content", ProtobufValue.newBuilder().setStringValue(text).build())
                         .build()
                 )
                 .build()
-        )
-        .build()
+        }
     }
 
     private fun extractEmbeddings(response: PredictResponse): List<FloatArray> {
@@ -90,6 +98,18 @@ class EmbeddingService(
                     null
                 }
             }.toFloatArray()
+        }
+    }
+
+    private fun validateEmbeddings(batch: List<ChunkData>, embeddings: List<FloatArray>) {
+        if (batch.size != embeddings.size) {
+            throw RuntimeException("Expected ${batch.size} embeddings, got ${embeddings.size}")
+        }
+        
+        embeddings.forEachIndexed { index, embedding ->
+            if (embedding.size != EMBEDDING_DIMENSION) {
+                throw RuntimeException("Embedding at index $index has incorrect dimension: ${embedding.size}, expected $EMBEDDING_DIMENSION")
+            }
         }
     }
     
