@@ -26,7 +26,7 @@ class Document {
     @Column(name = "updated_at", nullable = false)
     var updatedAt: LocalDateTime = LocalDateTime.now()
 
-    @OneToMany(mappedBy = "document", cascade = [CascadeType.ALL], orphanRemoval = true)
+    @OneToMany(mappedBy = "document", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY)
     var chunks: MutableList<Chunk> = mutableListOf()
 
     @PrePersist

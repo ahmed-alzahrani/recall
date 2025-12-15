@@ -2,6 +2,9 @@ package com.recall.backend.model
 
 import jakarta.persistence.*
 import java.time.LocalDateTime
+import org.hibernate.annotations.Array
+import org.hibernate.annotations.JdbcTypeCode
+import org.hibernate.type.SqlTypes
 
 @Entity
 @Table(name = "chunks")
@@ -21,6 +24,8 @@ class Chunk {
     var chunkIndex: Int = 0
 
     @Column(name = "embedding", nullable = false, columnDefinition = "vector(768)")
+    @JdbcTypeCode(SqlTypes.VECTOR)
+    @Array(length = 768)
     var embedding: FloatArray? = null
 
     @Column(name = "page_start")
