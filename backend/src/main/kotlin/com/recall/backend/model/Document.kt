@@ -26,6 +26,9 @@ class Document {
     @Column(name = "updated_at", nullable = false)
     var updatedAt: LocalDateTime = LocalDateTime.now()
 
+    @Column(nullable = true, length = 500)
+    var summary: String? = null
+
     @OneToMany(mappedBy = "document", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY)
     var chunks: MutableList<Chunk> = mutableListOf()
 
