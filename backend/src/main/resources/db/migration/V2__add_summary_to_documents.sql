@@ -1,0 +1,3 @@
+ALTER TABLE documents 
+ADD COLUMN summary VARCHAR(500);
+
