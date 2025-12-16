@@ -17,6 +17,16 @@ export async function uploadDocument(file: File): Promise<any> {
     return response.json();
 }
 
+export async function getAllDocuments(): Promise<any> {
+    const response = await fetch(`${API_BASE_URL}/documents`);
+
+    if (!response.ok) {
+        throw new Error('Failed to fetch documents');
+    }
+
+    return response.json();
+}
+
 export async function getDocumentStatus(documentId: number): Promise<any> {
     const response = await fetch(`${API_BASE_URL}/documents/${documentId}/status`);
     

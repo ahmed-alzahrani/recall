@@ -1,11 +1,37 @@
+import { useState } from 'react'
+import { Routes, Route } from 'react-router-dom'
 import FileUpload from './components/FileUpload'
+import DocumentList from './components/DocumentList/DocumentList'
 import './App.css'
 
 function App() {
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+
   return (
     <div className="App">
-      <h1>Recall</h1>
-      <FileUpload />
+      <div className="top-bar">
+        <button 
+          className="sidebar-toggle"
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+        >
+          📄 Documents
+        </button>
+      </div>
+
+      <div className="main-layout">
+        {sidebarOpen && (
+          <div className="sidebar">
+            <DocumentList />
+          </div>
+        )}
+
+        <div className="main-content">
+          <h1>Recall</h1>
+          <Routes>
+            <Route path="/" element={<FileUpload />} />
+          </Routes>
+        </div>
+      </div>
     </div>
   )
 }
