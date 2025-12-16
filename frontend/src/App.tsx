@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Link } from 'react-router-dom'
 import FileUpload from './components/FileUpload'
 import DocumentList from './components/DocumentList/DocumentList'
 import './App.css'
@@ -16,6 +16,9 @@ function App() {
         >
           📄 Documents
         </button>
+        <Link to="/" className="top-bar-link">
+          📤 Upload
+        </Link>
       </div>
 
       <div className="main-layout">
