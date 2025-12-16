@@ -1,0 +1,54 @@
+.document-list {
+    color: #fff;
+}
+
+.document-list h3 {
+    margin: 0 0 16px 0;
+    font-size: 18px;
+    color: #fff;
+}
+
+.document-items {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.document-item {
+    padding: 12px;
+    border: 1px solid #333;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.document-item:hover {
+    background-color: #333;
+}
+
+.document-item.disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.document-item.disabled:hover {
+    background-color: transparent;
+}
+
+.document-filename {
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: #fff;
+}
+
+.document-status {
+    font-size: 12px;
+    color: #aaa;
+    margin-bottom: 8px;
+}
+
+.document-summary {
+    font-size: 14px;
+    color: #ccc;
+    line-height: 1.4;
+}
