@@ -13,13 +13,13 @@ import org.springframework.web.multipart.MultipartFile
 @RequestMapping("/api/documents")
 @CrossOrigin(origins = ["http://localhost:3000"])
 class DocumentController(
-    private val documentRepository: DocumentRepository,
-    private val rabbitTemplate: RabbitTemplate,
+        private val documentRepository: DocumentRepository,
+        private val rabbitTemplate: RabbitTemplate,
         @Value("\${app.upload.tmp-dir}") private val tmpFileStoragePath: String,
 ) {
 
     private val TMP_FILE_STORAGE = Path(tmpFileStoragePath)
-    
+
     @PostMapping("/upload")
     fun uploadDocument(@RequestParam("file") file: MultipartFile): Map<String, Any?> {
 
@@ -35,8 +35,8 @@ class DocumentController(
         val savedDocument =
                 documentRepository.save(
                         Document().apply {
-            filename = file.originalFilename ?: "unknown.pdf"
-            status = DocumentStatus.PENDING
+                            filename = file.originalFilename ?: "unknown.pdf"
+                            status = DocumentStatus.PENDING
                         }
                 )
 
@@ -49,25 +49,42 @@ class DocumentController(
         )
 
         return mapOf(
-            "message" to "File uploaded successfully",
-            "filename" to file.originalFilename,
-            "size" to file.size,
-            "documentId" to savedDocument.id
+                "message" to "File uploaded successfully",
+                "filename" to file.originalFilename,
+                "size" to file.size,
+                "documentId" to savedDocument.id
+        )
+    }
+
+    @GetMapping("/documents")
+    fun getDocuments(): List<Map<String, Any?>> {
+        return documentRepository.findAll().map { document ->
+            mapOf(
+                    "documentId" to document.id,
+                    "filename" to document.filename,
+                    "status" to document.status.name,
+                    "summary" to document.summary,
+                    "totalChunks" to document.totalChunks,
+                    "createdAt" to document.createdAt,
+                    "updatedAt" to document.updatedAt
             )
+        }
     }
 
     @GetMapping("/{documentId}/status")
     fun getDocumentStatus(@PathVariable documentId: Long): Map<String, Any?> {
-        val document = documentRepository.findById(documentId)
-            .orElseThrow { RuntimeException("Document not found with id: $documentId") }
-        
+        val document =
+                documentRepository.findById(documentId).orElseThrow {
+                    RuntimeException("Document not found with id: $documentId")
+                }
+
         return mapOf(
-            "documentId" to document.id,
-            "status" to document.status.name,
-            "filename" to document.filename,
-            "totalChunks" to document.totalChunks,
-            "createdAt" to document.createdAt,
-            "updatedAt" to document.updatedAt
+                "documentId" to document.id,
+                "status" to document.status.name,
+                "filename" to document.filename,
+                "totalChunks" to document.totalChunks,
+                "createdAt" to document.createdAt,
+                "updatedAt" to document.updatedAt
         )
     }
 }
