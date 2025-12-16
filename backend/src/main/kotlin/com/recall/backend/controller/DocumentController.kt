@@ -56,7 +56,7 @@ class DocumentController(
         )
     }
 
-    @GetMapping("/documents")
+    @GetMapping
     fun getDocuments(): List<Map<String, Any?>> {
         return documentRepository.findAll().map { document ->
             mapOf(
