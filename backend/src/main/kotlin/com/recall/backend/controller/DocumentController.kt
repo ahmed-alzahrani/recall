@@ -88,7 +88,7 @@ class DocumentController(
         )
     }
 
-    @GetMapping("/{documentID}")
+    @GetMapping("/{documentId}")
     fun getDocument(@PathVariable documentId: Long): Map<String, Any?> {
         val document =
                 documentRepository.findById(documentId).orElseThrow {
