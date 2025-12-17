@@ -1,16 +1,19 @@
 import { useState } from 'react'
-import { Routes, Route, Link } from 'react-router-dom'
+import { Routes, Route, Link, useLocation } from 'react-router-dom'
 import FileUpload from './components/FileUpload'
 import DocumentList from './components/DocumentList/DocumentList'
+import Chat from './components/Chat/Chat'
 import './App.css'
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const location = useLocation()
+  const isChatPage = location.pathname.startsWith('/chat/')
 
   return (
     <div className="App">
       <div className="top-bar">
-        <button 
+        <button
           className="sidebar-toggle"
           onClick={() => setSidebarOpen(!sidebarOpen)}
         >
@@ -29,9 +32,10 @@ function App() {
         )}
 
         <div className="main-content">
-          <h1>Recall</h1>
+          {!isChatPage && <h1>Recall</h1>}
           <Routes>
             <Route path="/" element={<FileUpload />} />
+            <Route path="/chat/:documentId" element={<Chat />} />
           </Routes>
         </div>
       </div>

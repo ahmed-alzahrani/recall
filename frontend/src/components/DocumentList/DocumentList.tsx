@@ -1,17 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getAllDocuments } from '../../services/api'
+import type { Document } from '../../types/document'
 import './DocumentList.css'
 
-interface Document {
-  documentId: number
-  filename: string
-  status: string
-  summary: string | null
-  totalChunks: number
-  createdAt: string
-  updatedAt: string
-}
 
 function DocumentList() {
   const [documents, setDocuments] = useState<Document[]>([])
