@@ -36,3 +36,13 @@ export async function getDocumentStatus(documentId: number): Promise<any> {
     
     return response.json();
 }
+
+export async function getDocument(documentId: number): Promise<any> {
+    const response = await fetch(`${API_BASE_URL}/documents/${documentId}`);
+    
+    if (!response.ok) {
+        throw new Error('Failed to fetch document');
+    }
+    
+    return response.json();
+}
