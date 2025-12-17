@@ -87,7 +87,7 @@ function Chat() {
                             className="chat-input"
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}
-                            onKeyPress={(e) => {
+                            onKeyDown={(e) => {
                                 if (e.key === 'Enter' && !e.shiftKey) {
                                     e.preventDefault()
                                     handleSend()
@@ -97,13 +97,16 @@ function Chat() {
                             rows={3}
                             disabled={sending}
                         />
-                        <button
-                            className="chat-send-button"
-                            onClick={handleSend}
-                            disabled={!inputValue.trim() || sending}
-                        >
-                            {sending ? 'Sending...' : 'Send'}
-                        </button>
+                        <div className="chat-input-footer">
+                            <button
+                                className="chat-send-button"
+                                onClick={handleSend}
+                                disabled={!inputValue.trim() || sending}
+                                title="Send message"
+                            >
+                                {sending ? '...' : '↑'}
+                            </button>
+                        </div>
                     </div>
                 </>
             )}
