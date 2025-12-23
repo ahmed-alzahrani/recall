@@ -3,6 +3,7 @@ package com.recall.backend.controller
 import com.recall.backend.model.Document
 import com.recall.backend.model.DocumentStatus
 import com.recall.backend.repository.DocumentRepository
+import com.recall.backend.service.EmbeddingService
 import kotlin.io.path.*
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.beans.factory.annotation.Value
@@ -15,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile
 class DocumentController(
         private val documentRepository: DocumentRepository,
         private val rabbitTemplate: RabbitTemplate,
+        private val embeddingService: EmbeddingService,
         @Value("\${app.upload.tmp-dir}") private val tmpFileStoragePath: String,
 ) {
 
@@ -104,5 +106,17 @@ class DocumentController(
                 "createdAt" to document.createdAt,
                 "updatedAt" to document.updatedAt
         )
+    }
+
+    @PostMapping("/{documentId}/chat")
+    fun chat(@PathVariable documentId: Long, @RequestBody question: String): Map<String, Any?> {
+        val document =
+                documentRepository.findById(documentId).orElseThrow {
+                    RuntimeException("Document not found with id: $documentId")
+                }
+
+        val embeddedQuestion = embeddingService.embedQuestion(question)
+
+        return mapOf("answer" to "Answer to the question")
     }
 }
