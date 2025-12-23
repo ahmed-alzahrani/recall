@@ -2,6 +2,7 @@ package com.recall.backend.controller
 
 import com.recall.backend.model.Document
 import com.recall.backend.model.DocumentStatus
+import com.recall.backend.repository.ChunkRepository
 import com.recall.backend.repository.DocumentRepository
 import com.recall.backend.service.EmbeddingService
 import kotlin.io.path.*
@@ -17,6 +18,7 @@ class DocumentController(
         private val documentRepository: DocumentRepository,
         private val rabbitTemplate: RabbitTemplate,
         private val embeddingService: EmbeddingService,
+        private val chunkRepository: ChunkRepository,
         @Value("\${app.upload.tmp-dir}") private val tmpFileStoragePath: String,
 ) {
 
@@ -117,6 +119,8 @@ class DocumentController(
                         }
 
         val embeddedQuestion = embeddingService.embedQuestion(question)
+
+        val relevantChunks = chunkRepository.findSimilarChunks(documentId, embeddedQuestion)
 
         return mapOf("answer" to "Answer to the question")
     }
