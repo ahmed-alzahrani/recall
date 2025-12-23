@@ -111,9 +111,10 @@ class DocumentController(
     @PostMapping("/{documentId}/chat")
     fun chat(@PathVariable documentId: Long, @RequestBody question: String): Map<String, Any?> {
         val document =
-                documentRepository.findById(documentId).orElseThrow {
-                    RuntimeException("Document not found with id: $documentId")
-                }
+                documentRepository.findByIdAndStatus(documentId, DocumentStatus.COMPLETED)
+                        .orElseThrow {
+                            RuntimeException("No completed document found with id: $documentId")
+                        }
 
         val embeddedQuestion = embeddingService.embedQuestion(question)
 
