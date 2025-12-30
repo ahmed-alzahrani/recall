@@ -4,6 +4,7 @@ import com.recall.backend.model.Document
 import com.recall.backend.model.DocumentStatus
 import com.recall.backend.repository.ChunkRepository
 import com.recall.backend.repository.DocumentRepository
+import com.recall.backend.service.AnswerService
 import com.recall.backend.service.EmbeddingService
 import kotlin.io.path.*
 import org.springframework.amqp.rabbit.core.RabbitTemplate
@@ -19,6 +20,7 @@ class DocumentController(
         private val rabbitTemplate: RabbitTemplate,
         private val embeddingService: EmbeddingService,
         private val chunkRepository: ChunkRepository,
+        private val answerService: AnswerService,
         @Value("\${app.upload.tmp-dir}") private val tmpFileStoragePath: String,
 ) {
 
@@ -112,16 +114,25 @@ class DocumentController(
 
     @PostMapping("/{documentId}/chat")
     fun chat(@PathVariable documentId: Long, @RequestBody question: String): Map<String, Any?> {
-        val document =
-                documentRepository.findByIdAndStatus(documentId, DocumentStatus.COMPLETED)
-                        .orElseThrow {
-                            RuntimeException("No completed document found with id: $documentId")
-                        }
+        val maxQuestionLength = 1000
+        if (question.length > maxQuestionLength) {
+            return mapOf(
+                    "error" to "Question exceeds maximum length of $maxQuestionLength characters"
+            )
+        }
+
+        documentRepository.findByIdAndStatus(documentId, DocumentStatus.COMPLETED).orElseThrow {
+            RuntimeException("No completed document found with id: $documentId")
+        }
 
         val embeddedQuestion = embeddingService.embedQuestion(question)
 
         val relevantChunks = chunkRepository.findSimilarChunks(documentId, embeddedQuestion)
 
-        return mapOf("answer" to "Answer to the question")
+        val chunkTexts = relevantChunks.map { it.chunkText }
+
+        val answer = answerService.answerQuestion(question, chunkTexts)
+
+        return mapOf("answer" to answer)
     }
 }
