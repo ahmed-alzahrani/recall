@@ -20,8 +20,14 @@
   border-bottom: 1px solid #333;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: 0 20px;
   z-index: 1000;
+}
+
+.top-bar-left {
+  display: flex;
+  align-items: center;
 }
 
 .sidebar-toggle {
@@ -50,6 +56,27 @@
   color: #fff;
   font-size: 16px;
   padding: 8px 12px;
+}
+
+.github-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  text-decoration: none;
+  padding: 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s, opacity 0.2s;
+}
+
+.github-link:hover {
+  background-color: #333;
+  opacity: 0.9;
+}
+
+.github-link:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #555;
   border-radius: 4px;
   transition: background-color 0.2s;
 }
