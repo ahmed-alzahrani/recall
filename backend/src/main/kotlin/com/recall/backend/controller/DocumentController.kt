@@ -33,9 +33,9 @@ class DocumentController(
             return mapOf("error" to "Only PDF files are allowed")
         }
 
-        val maxSize = 25 * 1024 * 1024 // 25MB
+        val maxSize = 65 * 1024 * 1024 // 65MB
         if (file.size > maxSize) {
-            return mapOf("error" to "File size exceeds 25MB limit")
+            return mapOf("error" to "File size exceeds 65MB limit")
         }
 
         val savedDocument =

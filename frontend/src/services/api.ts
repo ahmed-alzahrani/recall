@@ -46,3 +46,20 @@ export async function getDocument(documentId: number): Promise<any> {
     
     return response.json();
 }
+
+export async function chatWithDocument(documentId: number, question: string): Promise<any> {
+    const response = await fetch(`${API_BASE_URL}/documents/${documentId}/chat`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(question),
+    });
+    
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to get answer');
+    }
+    
+    return response.json();
+}

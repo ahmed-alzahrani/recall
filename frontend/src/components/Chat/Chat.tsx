@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useParams } from 'react-router-dom'
-import { getDocument } from '../../services/api'
+import { getDocument, chatWithDocument } from '../../services/api'
 import type { Document } from '../../types/document'
 import './Chat.css'
 
@@ -39,8 +39,47 @@ function Chat() {
         fetchDocument()
     }, [documentId])
 
+    useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    }, [messages])
+
     const handleSend = async () => {
-        console.log("send message")
+        if (!inputValue.trim() || !documentId || sending) return
+
+        const question = inputValue.trim()
+        setInputValue('')
+
+        const userMessage: Message = {
+            id: Date.now().toString(),
+            type: 'user',
+            content: question,
+            timestamp: new Date(),
+        }
+
+        setMessages((prev) => [...prev, userMessage])
+        setSending(true)
+
+        try {
+            const response = await chatWithDocument(parseInt(documentId), question)
+            const assistantMessage: Message = {
+                id: (Date.now() + 1).toString(),
+                type: 'assistant',
+                content: response.answer,
+                timestamp: new Date(),
+            }
+            setMessages((prev) => [...prev, assistantMessage])
+        } catch (error) {
+            console.error('Failed to get answer:', error)
+            const errorMessage: Message = {
+                id: (Date.now() + 1).toString(),
+                type: 'assistant',
+                content: error instanceof Error ? error.message : 'Failed to get answer. Please try again.',
+                timestamp: new Date(),
+            }
+            setMessages((prev) => [...prev, errorMessage])
+        } finally {
+            setSending(false)
+        }
     }
 
     return (

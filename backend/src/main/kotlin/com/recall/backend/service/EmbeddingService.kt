@@ -19,7 +19,8 @@ class EmbeddingService(
 ) {
 
     companion object {
-        private const val BATCH_SIZE = 1000
+        private const val BATCH_SIZE =
+                15 // Limited by API token limit (20000 tokens), ~1000 tokens per chunk
         private const val EMBEDDING_DIMENSION = 768
     }
 
