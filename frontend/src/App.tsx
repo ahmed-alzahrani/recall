@@ -7,8 +7,13 @@ import './App.css'
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [refreshTrigger, setRefreshTrigger] = useState(0)
   const location = useLocation()
   const isChatPage = location.pathname.startsWith('/chat/')
+
+  const handleDocumentProcessed = () => {
+    setRefreshTrigger(prev => prev + 1)
+  }
 
   return (
     <div className="App">
@@ -27,14 +32,14 @@ function App() {
       <div className="main-layout">
         {sidebarOpen && (
           <div className="sidebar">
-            <DocumentList />
+            <DocumentList refreshTrigger={refreshTrigger} />
           </div>
         )}
 
         <div className="main-content">
           {!isChatPage && <h1>Recall</h1>}
           <Routes>
-            <Route path="/" element={<FileUpload />} />
+            <Route path="/" element={<FileUpload onDocumentProcessed={handleDocumentProcessed} />} />
             <Route path="/chat/:documentId" element={<Chat />} />
           </Routes>
         </div>

@@ -5,8 +5,11 @@ import { uploadDocument, getDocumentStatus } from '../../services/api';
 
 type UploadStatus = 'idle' | 'uploading' | 'processing' | 'success' | 'error';
 
+interface FileUploadProps {
+    onDocumentProcessed?: () => void
+}
 
-function FileUpload() {
+function FileUpload({ onDocumentProcessed }: FileUploadProps) {
 
     const [file, setFile] = useState<File | null>(null);
     const [status, setStatus] = useState<UploadStatus>('idle');
@@ -71,7 +74,9 @@ function FileUpload() {
                             pollingIntervalRef.current = null
                         }
                         setStatus(statusData.status === 'COMPLETED' ? 'success' : 'error')
-                        if (statusData.status === 'FAILED') {
+                        if (statusData.status === 'COMPLETED') {
+                            onDocumentProcessed?.()
+                        } else {
                             setError('Document processing failed')
                         }
                     }
@@ -93,7 +98,7 @@ function FileUpload() {
 
     return (
         <div className="upload-container">
-            <div {...getRootProps()} className={`dropzone ${isDragActive ? 'drag-active' : ''}`}>
+            <div {...getRootProps()} className={`dropzone ${isDragActive ? 'drag-active' : ''} ${status === 'uploading' || status === 'processing' ? 'disabled' : ''}`}>
                 <input {...getInputProps()} />
                 <div className="dropzone-content">
                     {isDragActive ? (
@@ -106,6 +111,9 @@ function FileUpload() {
 
             {file && (
                 <div className="file-info">
+                    <button className="dismiss-button" onClick={() => setFile(null)} title="Dismiss">
+                        ×
+                    </button>
                     <p>Selected: {file.name}</p>
                     <p className="file-size">{(file.size / (1024 * 1024)).toFixed(2)} MB</p>
                 </div>
@@ -117,14 +125,32 @@ function FileUpload() {
                 </div>
             )}
 
+            {status === 'uploading' && (
+                <div className="upload-status">
+                    <div className="spinner-small"></div>
+                    <p>Uploading document...</p>
+                </div>
+            )}
+
             {status === 'processing' && (
                 <div className="processing-status">
+                    <div className="spinner-small"></div>
                     <p>Processing document...</p>
                 </div>
             )}
 
             {status === 'success' && (
                 <div className="success-message">
+                    <button
+                        className="dismiss-button"
+                        onClick={() => {
+                            setStatus('idle')
+                            setFile(null)
+                        }}
+                        title="Dismiss"
+                    >
+                        ×
+                    </button>
                     <p>✅ Document processed successfully!</p>
                 </div>
             )}

@@ -78,12 +78,15 @@
 }
 
 .sidebar {
-  width: 300px;
+  width: 400px;
   background-color: #2a2a2a;
   border-right: 1px solid #333;
-  padding: 20px;
-  overflow-y: auto;
-  min-height: calc(100vh - 60px);
+  padding: 20px 16px 20px 20px;
+  height: calc(100vh - 60px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .main-content {
