@@ -13,14 +13,14 @@ function FileUpload() {
     const [error, setError] = useState<string | null>(null);
 
     const [documentId, setDocumentId] = useState<number | null>(null);
-    const pollingIntervalRef = useRef<number| null>(null);
+    const pollingIntervalRef = useRef<number | null>(null);
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         accept: {
             'application/pdf': ['.pdf']
         },
         maxFiles: 1,
-        maxSize: 25 * 1024 * 1024, // 25MB
+        maxSize: 65 * 1024 * 1024, // 65MB
         onDrop: async (acceptedFiles, rejectedFiles) => {
             setError(null)
 
@@ -29,7 +29,7 @@ function FileUpload() {
                 const errorCode = rejection.errors[0]?.code
 
                 if (errorCode === 'file-too-large') {
-                    setError('File size exceeds 25MB limit')
+                    setError('File size exceeds 65MB limit')
                 } else if (errorCode === 'file-invalid-type') {
                     setError('Only PDF files are allowed')
                 } else if (errorCode === 'too-many-files') {
@@ -64,7 +64,7 @@ function FileUpload() {
                 try {
                     const statusData = await getDocumentStatus(documentId)
                     // statusData.status will be 'PENDING', 'PROCESSING', 'COMPLETED', or 'FAILED'
-                    
+
                     if (statusData.status === 'COMPLETED' || statusData.status === 'FAILED') {
                         if (pollingIntervalRef.current) {
                             clearInterval(pollingIntervalRef.current)
@@ -79,10 +79,10 @@ function FileUpload() {
                     console.error('Error polling status:', error)
                 }
             }
-            
+
             pollStatus()
             pollingIntervalRef.current = setInterval(pollStatus, 2000) as unknown as number
-            
+
             return () => {
                 if (pollingIntervalRef.current) {
                     clearInterval(pollingIntervalRef.current)
@@ -103,26 +103,26 @@ function FileUpload() {
                     )}
                 </div>
             </div>
-            
+
             {file && (
                 <div className="file-info">
                     <p>Selected: {file.name}</p>
                     <p className="file-size">{(file.size / (1024 * 1024)).toFixed(2)} MB</p>
                 </div>
             )}
-            
+
             {error && (
                 <div className="error-message">
                     {error}
                 </div>
             )}
-            
+
             {status === 'processing' && (
                 <div className="processing-status">
                     <p>Processing document...</p>
                 </div>
             )}
-            
+
             {status === 'success' && (
                 <div className="success-message">
                     <p>✅ Document processed successfully!</p>
