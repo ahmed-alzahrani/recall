@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useParams } from 'react-router-dom'
+import ReactMarkdown from 'react-markdown'
 import { getDocument, chatWithDocument } from '../../services/api'
 import type { Document } from '../../types/document'
 import './Chat.css'
@@ -115,7 +116,13 @@ function Chat() {
                                     <div className="message-label">
                                         {message.type === 'user' ? 'You' : 'Assistant'}
                                     </div>
-                                    <div className="message-content">{message.content}</div>
+                                    <div className="message-content">
+                                        {message.type === 'assistant' ? (
+                                            <ReactMarkdown>{message.content}</ReactMarkdown>
+                                        ) : (
+                                            message.content
+                                        )}
+                                    </div>
                                 </div>
                             ))
                         )}
