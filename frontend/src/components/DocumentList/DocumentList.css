@@ -1,5 +1,10 @@
 .document-list {
     color: #fff;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 0;
 }
 
 .document-list h3 {
@@ -12,6 +17,11 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex: 1;
+    min-height: 0;
+    padding-bottom: 8px;
 }
 
 .document-item {

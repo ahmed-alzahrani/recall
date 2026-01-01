@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useParams } from 'react-router-dom'
+import ReactMarkdown from 'react-markdown'
 import { getDocument, chatWithDocument } from '../../services/api'
 import type { Document } from '../../types/document'
 import './Chat.css'
@@ -110,14 +111,33 @@ function Chat() {
                                 <p>Ask a question about this document to get started.</p>
                             </div>
                         ) : (
-                            messages.map((message) => (
-                                <div key={message.id} className={`message message-${message.type}`}>
-                                    <div className="message-label">
-                                        {message.type === 'user' ? 'You' : 'Assistant'}
+                            <>
+                                {messages.map((message) => (
+                                    <div key={message.id} className={`message message-${message.type}`}>
+                                        <div className="message-label">
+                                            {message.type === 'user' ? 'You' : 'Assistant'}
+                                        </div>
+                                        <div className="message-content">
+                                            {message.type === 'assistant' ? (
+                                                <ReactMarkdown>{message.content}</ReactMarkdown>
+                                            ) : (
+                                                message.content
+                                            )}
+                                        </div>
                                     </div>
-                                    <div className="message-content">{message.content}</div>
-                                </div>
-                            ))
+                                ))}
+                                {sending && (
+                                    <div className="message message-assistant">
+                                        <div className="message-label">Assistant</div>
+                                        <div className="message-content">
+                                            <div className="message-loading">
+                                                <div className="spinner-small"></div>
+                                                <span>Thinking...</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </>
                         )}
                         <div ref={messagesEndRef} />
                     </div>
@@ -143,7 +163,7 @@ function Chat() {
                                 disabled={!inputValue.trim() || sending}
                                 title="Send message"
                             >
-                                {sending ? '...' : '↑'}
+                                {sending ? <div className="spinner-small"></div> : '↑'}
                             </button>
                         </div>
                     </div>

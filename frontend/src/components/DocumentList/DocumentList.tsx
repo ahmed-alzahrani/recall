@@ -5,7 +5,11 @@ import type { Document } from '../../types/document'
 import './DocumentList.css'
 
 
-function DocumentList() {
+interface DocumentListProps {
+  refreshTrigger?: number
+}
+
+function DocumentList({ refreshTrigger }: DocumentListProps) {
   const [documents, setDocuments] = useState<Document[]>([])
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
@@ -13,6 +17,7 @@ function DocumentList() {
   useEffect(() => {
     const fetchDocuments = async () => {
       try {
+        setLoading(true)
         const data = await getAllDocuments()
         setDocuments(data)
       } catch (error) {
@@ -23,7 +28,7 @@ function DocumentList() {
     }
 
     fetchDocuments()
-  }, [])
+  }, [refreshTrigger])
 
   const handleDocumentClick = (documentId: number, status: string) => {
     if (status === 'COMPLETED') {
@@ -37,7 +42,7 @@ function DocumentList() {
 
   return (
     <div className="document-list">
-      <h3>Documents</h3>
+      <h3>Documents: {documents.length}</h3>
       {documents.length === 0 ? (
         <p>No documents yet</p>
       ) : (

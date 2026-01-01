@@ -45,6 +45,7 @@
     background-color: #2a2a2a;
     border-radius: 6px;
     border-left: 4px solid #646cff;
+    position: relative;
 }
 
 .file-info p {
@@ -64,4 +65,87 @@
     border-radius: 6px;
     border-left: 4px solid #f44;
     color: #ff6666;
+}
+
+.dropzone.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.upload-status,
+.processing-status {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: #2a2a2a;
+    border-radius: 6px;
+    border-left: 4px solid #4a9eff;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.upload-status p,
+.processing-status p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.87);
+}
+
+.success-message {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: #223a22;
+    border-radius: 6px;
+    border-left: 4px solid #4af44a;
+    color: #66ff66;
+    position: relative;
+}
+
+.success-message p {
+    margin: 0;
+}
+
+.dismiss-button {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: color 0.2s, background-color 0.2s;
+}
+
+.dismiss-button:hover {
+    color: rgba(255, 255, 255, 0.9);
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.spinner-small {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(74, 158, 255, 0.3);
+    border-top: 2px solid #4a9eff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    flex-shrink: 0;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
