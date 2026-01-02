@@ -5,8 +5,6 @@ A RAG-based document Q&A system that allows you to upload PDF documents, process
 ## Table of Contents
 
 - [What is RAG?](#what-is-rag)
-  - [How It Works](#how-it-works)
-  - [Key Benefits](#key-benefits)
 - [Tech Stack and Architecture](#tech-stack-and-architecture)
   - [Backend](#backend)
   - [Frontend](#frontend)
@@ -25,17 +23,7 @@ A RAG-based document Q&A system that allows you to upload PDF documents, process
 - [Configuration](#configuration)
   - [File Size Limits](#file-size-limits)
   - [AI Models](#ai-models)
-- [Usage](#usage)
-  - [Uploading a Document](#uploading-a-document)
-  - [Asking Questions](#asking-questions)
-  - [Managing Documents](#managing-documents)
 - [Project Structure](#project-structure)
-- [API Endpoints](#api-endpoints)
-- [Troubleshooting](#troubleshooting)
-  - [Docker Services Not Starting](#docker-services-not-starting)
-  - [Backend Connection Issues](#backend-connection-issues)
-  - [Frontend Not Connecting to Backend](#frontend-not-connecting-to-backend)
-- [License](#license)
 
 ## What is RAG?
 
@@ -113,7 +101,7 @@ graph TD
 - **Java 21** (for Spring Boot backend)
 - **Node.js** (includes npm) (for React frontend)
 - **Google Cloud Account** with:
-  - Vertex AI API enabled
+  - Vertex AI API enabled ([Enable Vertex AI API](https://cloud.google.com/vertex-ai/docs/quickstart#enable_the_api))
   - Service account credentials with appropriate permissions
   - Project ID and location configured
 
@@ -147,9 +135,9 @@ GOOGLE_CLOUD_LOCATION=us-central1
 
 ### 3. Set Up Google Cloud Credentials
 
-1. Create a service account in your Google Cloud project
-2. Grant it the necessary Vertex AI permissions
-3. Download the service account JSON key file
+1. Create a service account in your Google Cloud project ([Google Cloud documentation](https://cloud.google.com/iam/docs/creating-managing-service-accounts))
+2. Grant it the necessary Vertex AI permissions (see [Vertex AI IAM roles](https://cloud.google.com/vertex-ai/docs/general/access-control#required_permissions))
+3. Download the service account JSON key file ([Create service account keys](https://cloud.google.com/iam/docs/creating-managing-service-account-keys))
 4. Set the `GOOGLE_APPLICATION_CREDENTIALS` environment variable:
 
 ```bash
@@ -249,30 +237,6 @@ The frontend will start on `http://localhost:3000` (or another port if 3000 is o
 
 Configuration can be adjusted in `backend/src/main/resources/application.properties`.
 
-## Usage
-
-### Uploading a Document
-
-1. Click "Upload" in the top navigation
-2. Drag and drop a PDF file or click to select
-3. Wait for the document to be processed (uploading → processing → completed)
-4. You'll see a success message when processing is complete
-
-### Asking Questions
-
-1. Click "Documents" in the top navigation to open the sidebar
-2. Click on a completed document
-3. Type your question in the chat input
-4. Press Enter or click the send button (↑)
-5. The AI will answer based on the document content
-
-### Managing Documents
-
-- View all documents in the sidebar
-- See document status (PENDING, PROCESSING, COMPLETED, FAILED)
-- View document summaries
-- Click on completed documents to start chatting
-
 ## Project Structure
 
 ```
@@ -288,35 +252,3 @@ recall/
 ├── start.sh               # Convenience script to start services
 └── README.md              # This file
 ```
-
-## API Endpoints
-
-- `POST /api/documents/upload` - Upload a PDF document
-- `GET /api/documents` - List all documents
-- `GET /api/documents/{documentId}` - Get document details
-- `GET /api/documents/{documentId}/status` - Get document processing status
-- `POST /api/documents/{documentId}/chat` - Ask a question about a document
-
-## Troubleshooting
-
-### Docker Services Not Starting
-
-- Ensure Docker Desktop is running
-- Check if ports 5432, 5672, or 15672 are already in use
-- Verify your `.env` file has all required variables
-
-### Backend Connection Issues
-
-- Verify Docker services are running: `docker-compose ps`
-- Check that environment variables are set correctly
-- Ensure `GOOGLE_APPLICATION_CREDENTIALS` is set and points to a valid service account key
-
-### Frontend Not Connecting to Backend
-
-- Verify the backend is running on port 8080
-- Check the API base URL in `frontend/src/services/api.ts`
-- Ensure CORS is properly configured (default allows `http://localhost:3000`)
-
-## License
-
-[Add your license here]
