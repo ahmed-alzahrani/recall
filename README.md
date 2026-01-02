@@ -2,6 +2,41 @@
 
 A RAG-based document Q&A system that allows you to upload PDF documents, process them with AI, and ask questions to get intelligent answers based on the document content. If the document lacks context, or the answer can be supplemented by general knowledge, then the LLM will do so.
 
+## Table of Contents
+
+- [What is RAG?](#what-is-rag)
+  - [How It Works](#how-it-works)
+  - [Key Benefits](#key-benefits)
+- [Tech Stack and Architecture](#tech-stack-and-architecture)
+  - [Backend](#backend)
+  - [Frontend](#frontend)
+- [Prerequisites](#prerequisites)
+- [Installation & Setup](#installation--setup)
+  - [1. Clone the Repository](#1-clone-the-repository)
+  - [2. Configure Environment Variables](#2-configure-environment-variables)
+  - [3. Set Up Google Cloud Credentials](#3-set-up-google-cloud-credentials)
+  - [4. Start Docker Services](#4-start-docker-services)
+  - [5. Set Up Backend](#5-set-up-backend)
+  - [6. Set Up Frontend](#6-set-up-frontend)
+- [Running Locally](#running-locally)
+  - [Option 1: Using the Start Script (Backend Only)](#option-1-using-the-start-script-backend-only)
+  - [Option 2: Manual Start](#option-2-manual-start)
+  - [Access the Application](#access-the-application)
+- [Configuration](#configuration)
+  - [File Size Limits](#file-size-limits)
+  - [AI Models](#ai-models)
+- [Usage](#usage)
+  - [Uploading a Document](#uploading-a-document)
+  - [Asking Questions](#asking-questions)
+  - [Managing Documents](#managing-documents)
+- [Project Structure](#project-structure)
+- [API Endpoints](#api-endpoints)
+- [Troubleshooting](#troubleshooting)
+  - [Docker Services Not Starting](#docker-services-not-starting)
+  - [Backend Connection Issues](#backend-connection-issues)
+  - [Frontend Not Connecting to Backend](#frontend-not-connecting-to-backend)
+- [License](#license)
+
 ## What is RAG?
 
 **Retrieval-Augmented Generation (RAG)** is an AI framework that enhances Large Language Model (LLM) responses by combining them with external knowledge retrieval. Instead of relying solely on the model's training data, RAG grounds responses in your specific documents and data.
@@ -19,7 +54,7 @@ A RAG-based document Q&A system that allows you to upload PDF documents, process
 - **Domain Specificity**: Leverages your private/specialized knowledge base
 - **Verifiable Sources**: Can cite which documents informed the response 
 
-## Tech Stack + Architecture
+## Tech Stack and Architecture
 
 ```mermaid
 graph TD
