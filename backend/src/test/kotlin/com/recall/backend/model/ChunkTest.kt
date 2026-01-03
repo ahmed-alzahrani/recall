@@ -1,19 +1,14 @@
 package com.recall.backend.model
 
+import com.recall.backend.annotations.DatabaseTest
 import com.recall.backend.repository.ChunkRepository
 import com.recall.backend.repository.DocumentRepository
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest
-import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase
-import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase.Replace
 
-@DataJpaTest
-@AutoConfigureTestDatabase(replace = Replace.NONE)
+@DatabaseTest
 class ChunkTest {
-
-    private lateinit var document: Document
 
     @Autowired lateinit var chunkRepository: ChunkRepository
     @Autowired lateinit var documentRepository: DocumentRepository
