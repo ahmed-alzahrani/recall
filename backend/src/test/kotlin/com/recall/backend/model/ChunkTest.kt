@@ -1,6 +1,7 @@
 package com.recall.backend.model
 
 import com.recall.backend.RecallBackendApplication
+import com.recall.backend.config.FlywayConfig
 import com.recall.backend.repository.ChunkRepository
 import com.recall.backend.repository.DocumentRepository
 import org.junit.jupiter.api.Assertions.*
@@ -9,11 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase.Replace
+import org.springframework.context.annotation.Import
 import org.springframework.test.context.ContextConfiguration
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @ContextConfiguration(classes = [RecallBackendApplication::class])
+@Import(FlywayConfig::class)
 class ChunkTest {
 
     private lateinit var document: Document
