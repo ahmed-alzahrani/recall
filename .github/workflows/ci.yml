@@ -61,7 +61,7 @@ jobs:
           POSTGRES_DB: recall
           RABBITMQ_USER: testuser
           RABBITMQ_PASSWORD: testpass
-        run: ./gradlew test
+        run: ./gradlew test --info
 
   frontend-tests:
     name: Frontend Tests
