@@ -1,20 +1,21 @@
 #!/bin/bash
 
-# Get the project root directory
+# Get the project root directory (parent of scripts directory)
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # Source the .env file and export variables
-if [ -f "$SCRIPT_DIR/.env" ]; then
+if [ -f "$PROJECT_ROOT/.env" ]; then
     set -a  # automatically export all variables
-    source "$SCRIPT_DIR/.env"
+    source "$PROJECT_ROOT/.env"
     set +a  # stop automatically exporting
 else
-    echo "Error: .env file not found at $SCRIPT_DIR/.env"
+    echo "Error: .env file not found at $PROJECT_ROOT/.env"
     exit 1
 fi
 
 # Start PostgreSQL container if not already running
-cd "$SCRIPT_DIR"
+cd "$PROJECT_ROOT"
 if ! docker-compose ps postgres | grep -q "Up"; then
     echo "Starting PostgreSQL container..."
     docker-compose up -d postgres
@@ -70,6 +71,6 @@ else
     echo "Warning: Could not enable pgvector extension (it may already be enabled)"
 fi
 
-cd "$SCRIPT_DIR/backend"
+cd "$PROJECT_ROOT/backend"
 ./gradlew bootRun
 

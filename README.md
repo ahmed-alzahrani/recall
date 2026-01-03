@@ -180,10 +180,10 @@ npm install
 
 ### Option 1: Using the Start Script (Backend Only)
 
-The `start.sh` script will start Docker services and run the backend:
+The `scripts/start.sh` script will start Docker services and run the backend:
 
 ```bash
-./start.sh
+./scripts/start.sh
 ```
 
 Make sure your `.env` file is in the root directory and `GOOGLE_APPLICATION_CREDENTIALS` is set.
@@ -248,7 +248,8 @@ recall/
 ├── frontend/               # React frontend
 │   ├── src/               # React source code
 │   └── package.json       # npm dependencies
+├── scripts/                # Utility scripts
+│   └── start.sh           # Convenience script to start services
 ├── docker-compose.yml      # Docker services configuration
-├── start.sh               # Convenience script to start services
 └── README.md              # This file
 ```
