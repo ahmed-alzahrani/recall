@@ -1,9 +1,5 @@
 package com.recall.backend.service
 
-import com.google.cloud.vertexai.api.Candidate
-import com.google.cloud.vertexai.api.Content
-import com.google.cloud.vertexai.api.GenerateContentResponse
-import com.google.cloud.vertexai.api.Part
 import com.google.cloud.vertexai.generativeai.GenerativeModel
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
@@ -27,7 +23,7 @@ class AnswerServiceTest {
         val chunkTexts = listOf("Chunk 1 text", "Chunk 2 text")
         val expectedAnswer = "The main topic is about testing."
 
-        setupMockResponse(text = expectedAnswer)
+        GenerativeModelTestHelper.setupMockResponse(mockGenerativeModel, text = expectedAnswer)
 
         val result = answerService.answerQuestion(question, chunkTexts)
         assertEquals(expectedAnswer, result)
@@ -40,7 +36,7 @@ class AnswerServiceTest {
         val question = "What is the main topic?"
         val chunkTexts = listOf("Chunk 1 text")
 
-        setupMockResponse(candidates = emptyList())
+        GenerativeModelTestHelper.setupMockResponse(mockGenerativeModel, candidates = emptyList())
 
         assertThrows(IllegalStateException::class.java) {
             answerService.answerQuestion(question, chunkTexts)
@@ -52,7 +48,7 @@ class AnswerServiceTest {
         val question = "What is the main topic?"
         val chunkTexts = listOf("Chunk 1 text")
 
-        setupMockResponse(content = null)
+        GenerativeModelTestHelper.setupMockResponse(mockGenerativeModel, content = null)
 
         assertThrows(IllegalStateException::class.java) {
             answerService.answerQuestion(question, chunkTexts)
@@ -64,7 +60,7 @@ class AnswerServiceTest {
         val question = "What is the main topic?"
         val chunkTexts = listOf("Chunk 1 text")
 
-        setupMockResponse(parts = emptyList())
+        GenerativeModelTestHelper.setupMockResponse(mockGenerativeModel, parts = emptyList())
 
         assertThrows(IllegalStateException::class.java) {
             answerService.answerQuestion(question, chunkTexts)
@@ -76,48 +72,10 @@ class AnswerServiceTest {
         val question = "What is the main topic?"
         val chunkTexts = listOf("Chunk 1 text")
 
-        setupMockResponse(text = "")
+        GenerativeModelTestHelper.setupMockResponse(mockGenerativeModel, text = "")
 
         val result = answerService.answerQuestion(question, chunkTexts)
 
         assertEquals("", result)
-    }
-
-    private fun setupMockResponse(
-            candidates: List<Candidate>? = null,
-            content: Content? = null,
-            parts: List<Part>? = null,
-            text: String? = null
-    ): GenerateContentResponse {
-        val mockResponse = mock(GenerateContentResponse::class.java)
-        `when`(mockGenerativeModel.generateContent(anyString())).thenReturn(mockResponse)
-
-        val candidatesToReturn =
-                if (candidates != null) {
-                    candidates
-                } else {
-                    val mockCandidate = mock(Candidate::class.java)
-                    val contentToReturn =
-                            if (content != null) {
-                                content
-                            } else {
-                                val mockContent = mock(Content::class.java)
-                                val partsToReturn =
-                                        if (parts != null) {
-                                            parts
-                                        } else {
-                                            val mockPart = mock(Part::class.java)
-                                            text?.let { `when`(mockPart.text).thenReturn(it) }
-                                            listOf(mockPart)
-                                        }
-                                `when`(mockContent.partsList).thenReturn(partsToReturn)
-                                mockContent
-                            }
-                    `when`(mockCandidate.content).thenReturn(contentToReturn)
-                    listOf(mockCandidate)
-                }
-
-        `when`(mockResponse.candidatesList).thenReturn(candidatesToReturn)
-        return mockResponse
     }
 }
