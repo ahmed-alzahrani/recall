@@ -2,17 +2,16 @@ package com.recall.backend.service
 
 import com.google.cloud.vertexai.api.PredictResponse
 import com.google.cloud.vertexai.api.PredictionServiceClient
-import com.google.cloud.vertexai.api.PredictionServiceSettings
 import com.google.protobuf.Struct
 import com.google.protobuf.Value as ProtobufValue
 import com.recall.backend.dto.ChunkData
 import com.recall.backend.dto.ChunkWithEmbedding
-import javax.annotation.PreDestroy
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
 @Service
 class EmbeddingService(
+        private val predictionServiceClient: PredictionServiceClient,
         @Value("\${google.cloud.vertexai.project-id}") private val projectId: String,
         @Value("\${google.cloud.vertexai.location}") private val location: String,
         @Value("\${google.cloud.vertexai.embedding-model}") private val modelName: String,
@@ -24,20 +23,8 @@ class EmbeddingService(
         private const val EMBEDDING_DIMENSION = 768
     }
 
-    private val predictionServiceClient =
-            PredictionServiceClient.create(
-                    PredictionServiceSettings.newBuilder()
-                            .setEndpoint("${location}-aiplatform.googleapis.com:443")
-                            .build()
-            )
-
     private val modelPath =
             "projects/${projectId}/locations/${location}/publishers/google/models/${modelName}"
-
-    @PreDestroy
-    fun cleanup() {
-        predictionServiceClient.close()
-    }
 
     fun embedChunks(chunks: List<ChunkData>): List<ChunkWithEmbedding> {
         return chunks.chunked(BATCH_SIZE).flatMap { batch ->
