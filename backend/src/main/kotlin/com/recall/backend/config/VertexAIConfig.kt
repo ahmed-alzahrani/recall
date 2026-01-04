@@ -1,6 +1,8 @@
 package com.recall.backend.config
 
 import com.google.cloud.vertexai.VertexAI
+import com.google.cloud.vertexai.api.PredictionServiceClient
+import com.google.cloud.vertexai.api.PredictionServiceSettings
 import com.google.cloud.vertexai.generativeai.GenerativeModel
 import javax.annotation.PreDestroy
 import org.springframework.beans.factory.annotation.Value
@@ -16,13 +18,26 @@ class VertexAIConfig(
 
     private val vertexAi = VertexAI(projectId, location)
 
+    private val predictionServiceClient =
+            PredictionServiceClient.create(
+                    PredictionServiceSettings.newBuilder()
+                            .setEndpoint("${location}-aiplatform.googleapis.com:443")
+                            .build()
+            )
+
     @Bean
     fun generativeModel(): GenerativeModel {
         return GenerativeModel(modelName, vertexAi)
     }
 
+    @Bean
+    fun predictionServiceClient(): PredictionServiceClient {
+        return predictionServiceClient
+    }
+
     @PreDestroy
     fun cleanup() {
         vertexAi.close()
+        predictionServiceClient.close()
     }
 }
