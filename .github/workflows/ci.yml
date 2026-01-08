@@ -53,7 +53,7 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x backend/gradlew
 
-      - name: Run backend tests
+      - name: Run backend tests with coverage
         working-directory: ./backend
         env:
           POSTGRES_USER: testuser
@@ -61,7 +61,15 @@ jobs:
           POSTGRES_DB: recall
           RABBITMQ_USER: testuser
           RABBITMQ_PASSWORD: testpass
-        run: ./gradlew test --info
+        run: ./gradlew test jacocoTestReport --info
+
+      - name: Upload backend coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./backend/build/reports/jacoco/test/jacocoTestReport.xml
+          flags: backend
+          name: backend-coverage
+          fail_ci_if_error: false
 
   frontend-tests:
     name: Frontend Tests
@@ -82,6 +90,14 @@ jobs:
         working-directory: ./frontend
         run: npm ci
 
-      - name: Run frontend tests
+      - name: Run frontend tests with coverage
         working-directory: ./frontend
-        run: npm run test:run
+        run: npm run test:run -- --coverage
+
+      - name: Upload frontend coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./frontend/coverage/coverage-final.json
+          flags: frontend
+          name: frontend-coverage
+          fail_ci_if_error: false
