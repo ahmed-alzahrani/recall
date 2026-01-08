@@ -1,5 +1,8 @@
 # Recall
 
+![CI](https://github.com/ahmed-alzahrani/recall/actions/workflows/ci.yml/badge.svg)
+![codecov](https://codecov.io/gh/ahmed-alzahrani/recall/branch/main/graph/badge.svg)
+
 A RAG-based document Q&A system that allows you to upload PDF documents, process them with AI, and ask questions to get intelligent answers based on the document content. If the document lacks context, or the answer can be supplemented by general knowledge, then the LLM will do so.
 
 ## Table of Contents

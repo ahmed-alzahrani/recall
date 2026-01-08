@@ -7,9 +7,20 @@ export default defineConfig({
     port: 3000,
   },
   test: {
-    globals: true,           // Enable global test functions (describe, it, expect)
-    environment: 'jsdom',    // Use jsdom for browser environment
-    setupFiles: './src/test/setup.ts', // Setup file (we'll create this)
-    css: true,               // Process CSS files
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: './src/test/setup.ts',
+    css: true,
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html'],
+      exclude: [
+        'node_modules/',
+        'src/test/',
+        '**/*.d.ts',
+        '**/*.config.*',
+        '**/mockData',
+      ],
+    },
   },
 })
